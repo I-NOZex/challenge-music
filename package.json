@@ -1,0 +1,35 @@
+{
+  "name": "challenge-music",
+  "version": "0.0.1",
+  "description": "ubiwhere challenge music web app",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/I-NOZex/challenge-music.git"
+  },
+  "keywords": [
+    "ubiwhere",
+    "challenge",
+    "music",
+    "web",
+    "app"
+  ],
+  "author": "Tiago Marques",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/I-NOZex/challenge-music/issues"
+  },
+  "homepage": "https://github.com/I-NOZex/challenge-music#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "vue": "^2.3.3"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.12",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^3.0.0"
+  }
+}
