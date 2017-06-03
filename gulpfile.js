@@ -3,11 +3,13 @@ var del = require('del');
 var htmlmin = require('gulp-html-minifier');
 var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
 
 var devPaths = {
     html: './dev/*.html',
     scripts: ['./dev/js/**.js'],
-    sass: './dev/style/base.scss',
+    sass: './dev/style/*.scss',
+    images: './dev/img/*.*',
     vendor: {
             //BOOTSTRAP files
             bootstrap: [
@@ -23,6 +25,7 @@ var devPaths = {
 var prodPaths = {
     root : './prod',
     scripts: './prod/js',
+    images: './prod/img',
     vendor: {
         root: './prod/vendor',
         bootstrap: './prod/vendor/bootstrap',
@@ -42,30 +45,40 @@ gulp.task('clean', function() {
 });
 
 // Minify & compress html
-gulp.task('html-minify', ['clean'], function() {
-    return gulp.src(devPaths.html)
-        .pipe(htmlmin({collapseWhitespace: true}))
-        .pipe(gulp.dest(prodPaths.root))
-});
+var task_htmlMinify = function(){
+        return gulp.src(devPaths.html)
+            .pipe(htmlmin({collapseWhitespace: true}))
+            .pipe(gulp.dest(prodPaths.root))
 
-gulp.task('scripts', ['clean'], function() {
-    // Minify and copy all JavaScript (except vendor scripts)
-    // with sourcemaps all the way down
+}
+gulp.task('html-minify', ['clean'], task_htmlMinify);
+gulp.task('html-minify-watch', task_htmlMinify);
+
+
+// Minify and copy all JavaScript (except vendor scripts)
+// with sourcemaps all the way down
+var task_scripts = function(){
     return gulp.src(devPaths.scripts)
         .pipe(uglify())
         .pipe(gulp.dest(prodPaths.scripts));
-});
+}
+
+gulp.task('scripts', ['clean'], task_scripts);
+gulp.task('scripts-watch', task_scripts);
 
 // Compile SASS to static minified CSS
-gulp.task('sass', ['clean'], function() {
-    return gulp.src(devPaths.sass)
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(gulp.dest(prodPaths.styles));
-});
+var task_sass = function(){
+        return gulp.src(devPaths.sass)
+            .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+            //.pipe(autoprefixer())
+            .pipe(gulp.dest(prodPaths.styles));
+};
+gulp.task('sass', ['clean'], task_sass);
+gulp.task('sass-watch', task_sass);
+
 
 // Copy vendor boostrap
 gulp.task('copy-bootstrap', ['clean'], function() {
-
     return gulp.src(devPaths.vendor.bootstrap, {base: "./node_modules/bootstrap/dist"})
         .pipe(gulp.dest(prodPaths.vendor.bootstrap));
 });
@@ -79,14 +92,21 @@ gulp.task('copy-vue', ['clean'], function() {
 //copy vendors
 gulp.task('copy-vendors', ['copy-bootstrap','copy-vue']);
 
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-    gulp.watch(devPaths.html ['html-minify']);
-    gulp.watch(devPaths.sass ['sass']);
-    gulp.watch(devPaths.scripts ['scripts']);
+// Copy images
+gulp.task('copy-images', ['clean'], function() {
+    return gulp.src(devPaths.images)
+        .pipe(gulp.dest(prodPaths.images));
 });
 
-//development task
-gulp.task('start', ['watch', 'copy-vendors', 'html-minify', 'scripts', 'sass']);
+
+// Rerun the task when a file changes
+gulp.task('watch', function() {
+    gulp.watch(devPaths.html, ['html-minify-watch']);
+    gulp.watch('./dev/style/**.scss', ['sass-watch']);
+    gulp.watch(devPaths.scripts, ['scripts-watch']);
+});
+
 //release task
-gulp.task('release', ['copy-vendors', 'html-minify', 'scripts', 'sass']);
+gulp.task('release', ['clean', 'copy-images', 'copy-vendors', 'html-minify', 'scripts', 'sass']);
+//development task
+gulp.task('start', ['release', 'watch']);

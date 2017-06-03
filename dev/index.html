@@ -1,18 +1,42 @@
 <!DOCTYPE HTML>
-
-<html>
-
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ubiwhere Challenge Music App | Home</title>
 
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style/base.css" rel="stylesheet">
+
     <script src="vendor/vue/vue.min.js"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body>
-    <div id="app">
-        {{ message }}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <a href="./" class="logo"></a>
+            <hr/>
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="active"><a href="#">Latest</a></li>
+                <li role="presentation"><a href="#">Favorites</a></li>
+            </ul>
+            <hr/>
+            <div class="user-info">
+                <img id="user-avatar" src="#"/>
+                <span id="user-name">{{ username }}</span>
+            </div>
+        </div>
+        <div class="col-md-10">.col-md-1</div>
     </div>
+</div>
 
     <!-- load app -->
     <script src="js/app.js"></script>
