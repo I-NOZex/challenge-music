@@ -8,7 +8,7 @@ body{
 .sidebar{
     background-color: rgba(0,0,0,.5);
     height: 100vh;
-    padding-top: 15px;
+    padding: 15px;
 
     .logo{
         width: 100%;
@@ -18,6 +18,12 @@ body{
         background-repeat: no-repeat;
         background-position: center;
         display: block;
+    }
+
+    .user-info{
+        bottom: 0;
+        position: absolute;
+        margin-bottom: 15px;
     }
 
 }

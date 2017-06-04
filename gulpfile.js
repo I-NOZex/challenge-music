@@ -15,10 +15,15 @@ var devPaths = {
             bootstrap: [
                 './node_modules/bootstrap/dist/js/*.min.js',
                 './node_modules/bootstrap/dist/css/*.min.css',
+                './node_modules/bootstrap/dist/css/*.min.css.map',
                 './node_modules/bootstrap/dist/fonts/*.*'
             ],
             //VUE files
-            vue: ['./node_modules/vue/dist/vue.min.js']
+            vue: ['./node_modules/vue/dist/vue.min.js'],
+            //vue-resource
+            vueResource: ['./node_modules/vue-resource/dist/vue-resource.min.js'],
+            //vue-router
+            vueRouter: ['./node_modules/vue-router/dist/vue-router.min.js']
     }
 };
 
@@ -29,7 +34,9 @@ var prodPaths = {
     vendor: {
         root: './prod/vendor',
         bootstrap: './prod/vendor/bootstrap',
-        vue: './prod/vendor/vue'
+        vue: './prod/vendor/vue',
+        vueResource: './prod/vendor/vue-resource',
+        vueRouter: './prod/vendor/vue-router'
     },
     styles: './prod/style'
 };
@@ -89,8 +96,20 @@ gulp.task('copy-vue', ['clean'], function() {
         .pipe(gulp.dest(prodPaths.vendor.vue));
 });
 
+// Copy vendor vue-resource
+gulp.task('copy-vue-resource', ['clean'], function() {
+    return gulp.src(devPaths.vendor.vueResource, {base: "./node_modules/vue-resource/dist"})
+        .pipe(gulp.dest(prodPaths.vendor.vueResource));
+});
+
+// Copy vendor vue-router
+gulp.task('copy-vue-router', ['clean'], function() {
+    return gulp.src(devPaths.vendor.vueRouter, {base: "./node_modules/vue-router/dist"})
+        .pipe(gulp.dest(prodPaths.vendor.vueRouter));
+});
+
 //copy vendors
-gulp.task('copy-vendors', ['copy-bootstrap','copy-vue']);
+gulp.task('copy-vendors', ['copy-bootstrap','copy-vue', 'copy-vue-resource', 'copy-vue-router']);
 
 // Copy images
 gulp.task('copy-images', ['clean'], function() {

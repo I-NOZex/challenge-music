@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ubiwhere Challenge Music App | Home</title>
+    <title>Beat2Revolution | Home</title>
 
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="style/base.css" rel="stylesheet">
 
     <script src="vendor/vue/vue.min.js"></script>
+    <script src="vendor/vue-resource/vue-resource.min.js"></script>
+    <script src="vendor/vue-router/vue-router.min.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -19,23 +21,62 @@
 </head>
 
 <body>
-<div class="container-fluid">
+<!-- VUE TEMPLATES -->
+<!-- track list -->
+<template id="tpl-tracklist">
+    <ol class="tracks-list" id="tracks-container">
+        <li v-for="track in tracks">
+            <div><router-link :to="{ name: 'music', params: { musicId: track.id }}" class="track-name">{{ track.track }}</router-link></div>
+            <div>
+                <span class="track-artist">{{ track.artist }}</span>
+                <span class="separator">•</span>
+                <span class="track-album">{{ track.album }}</span>
+            </div>
+        </li>
+    </ol>
+</template>
+
+<!-- track details -->
+<template id="tpl-track-details">
+    <div><span class="track-name">{{ track.track }}</span></div>
+    <div>
+        <span class="track-artist">{{ track.artist }}</span>
+        <span class="separator">•</span>
+        <span class="track-album">{{ track.album }}</span>
+    </div>
+</template>
+
+<!-- user favorites -->
+<template id="tpl-favorites">
+    <h1>les favourites</h1>
+</template>
+<!-- END VUE TEMPLATES -->
+
+<div id="app" class="container-fluid">
     <div class="row">
         <div class="col-md-2 sidebar">
             <a href="./" class="logo"></a>
             <hr/>
             <ul class="nav nav-pills nav-stacked">
-                <li role="presentation" class="active"><a href="#">Latest</a></li>
-                <li role="presentation"><a href="#">Favorites</a></li>
+                <router-link tag="li" to="/" role="presentation">
+                    <a>Latest</a>
+                </router-link>
+
+                <router-link tag="li" :to="{ name: 'favorites', params: { userId: 2 }}" role="presentation">
+                    <a>Favorites</a>
+                </router-link>
             </ul>
             <hr/>
             <div class="user-info">
                 <img id="user-avatar" src="#"/>
-                <span id="user-name">{{ username }}</span>
+                <span id="user-name">---</span>
             </div>
         </div>
-        <div class="col-md-10">.col-md-1</div>
+        <div class="col-md-10">
+            <router-view></router-view>
+        </div>
     </div>
+
 </div>
 
     <!-- load app -->
