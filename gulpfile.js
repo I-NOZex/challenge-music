@@ -3,6 +3,7 @@ var del = require('del');
 var htmlmin = require('gulp-html-minifier');
 var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
+var sourcemaps = require('gulp-sourcemaps');
 const autoprefixer = require('gulp-autoprefixer');
 
 var devPaths = {
@@ -66,7 +67,9 @@ gulp.task('html-minify-watch', task_htmlMinify);
 // with sourcemaps all the way down
 var task_scripts = function(){
     return gulp.src(devPaths.scripts)
+        .pipe(sourcemaps.init())
         .pipe(uglify())
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(prodPaths.scripts));
 }
 

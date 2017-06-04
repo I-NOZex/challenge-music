@@ -8,9 +8,52 @@ var api = new Vue({
 
 var apiResources = {
     users: 'users',
+    //login: 'users/:userEmail',
     favorites: 'users/:userId/musics',
     musics: 'musics',
     musicDetails: 'musics/:musicId'
+}
+
+var User = new function(){
+    this.id = null;
+    this.username = null;
+    this.email = null;
+    this.isLogged = false;
+    return this;
+}
+
+User.login = function(email){
+    var _this = this;
+    return new Promise(function(resolve, reject){
+        if (!email) reject('Enter an email address');
+        api.$http.get(apiResources.users).then(function success(response){
+            /**/
+            var userByEmail = response.body.find(function(user){
+                return user.email === email;
+            });
+            if (!userByEmail){
+                reject('No user matching provided email');
+                return;
+            }
+            _this.isLogged = true;
+            Object.keys(userByEmail).forEach(function(field){
+                _this[field] = userByEmail[field];
+            })
+            resolve(_this);
+
+        }, function error(response){
+            reject('Request error: '+response.statusText)
+        });
+    });
+}
+
+User.logout = function(){
+    var _this = this;
+    if (!_this.isLogged) return false;
+    this.id = null;
+    this.username = null;
+    this.email = null;
+    this.isLogged = false;
 }
 
 // 1. Define route components.
@@ -100,5 +143,7 @@ var router = new VueRouter({
 // whole app router-aware.
 var app = new Vue({
     router:router,
-
+    data: {
+        User: User
+    }
 }).$mount('#app')

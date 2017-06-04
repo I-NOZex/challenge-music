@@ -38,11 +38,9 @@
 
 <!-- track details -->
 <template id="tpl-track-details">
-    <div><span class="track-name">{{ track.track }}</span></div>
-    <div>
-        <span class="track-artist">{{ track.artist }}</span>
-        <span class="separator">•</span>
-        <span class="track-album">{{ track.album }}</span>
+    <div><p class="track-name">Title: {{ track.track }}</p>
+        <p class="track-artist">Artist: {{ track.artist }}</p>
+        <p class="track-album">Album: {{ track.album }}</p>
     </div>
 </template>
 
@@ -67,9 +65,12 @@
                 </router-link>
             </ul>
             <hr/>
-            <div class="user-info">
+            <div v-if="User.isLogged" class="user-info">
                 <img id="user-avatar" src="#"/>
                 <span id="user-name">---</span>
+            </div>
+            <div v-else>
+                Please login
             </div>
         </div>
         <div class="col-md-10">
