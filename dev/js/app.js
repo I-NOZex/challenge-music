@@ -123,7 +123,9 @@ Vue.component('login-input',{
         login: function(email){
             /*var re = /\S+@\S+\.\S+/;
             if(!re.test(email)) return false;*/
-            this.$parent.User.login(email);
+            this.$parent.User.login(email).then(function(result){
+            app.$refs.curComponent.fetchFavs(true)
+            });
         }
     },
 })
@@ -155,6 +157,7 @@ var HomeComponent = {
                 console.log('tracks loaded');
                 _this.tracks = tracks.body;
             });
+
         },
         fetchFavs: function(isCreation){
             var _this = this;
@@ -163,6 +166,7 @@ var HomeComponent = {
                 if(!favs.body) return;
 
                 _this.favorites = favs.body;
+
                 if(isCreation){
                     _this.fvs = [];
                     _this.favorites.forEach(function(f){
