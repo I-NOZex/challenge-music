@@ -20,7 +20,7 @@ var devPaths = {
                 './node_modules/bootstrap/dist/fonts/*.*'
             ],
             //VUE files
-            vue: ['./node_modules/vue/dist/vue.min.js'],
+            vue: ['./node_modules/vue/dist/vue.js'],
             //vue-resource
             vueResource: ['./node_modules/vue-resource/dist/vue-resource.min.js'],
             //vue-router

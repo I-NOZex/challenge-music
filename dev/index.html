@@ -9,7 +9,7 @@
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="style/base.css" rel="stylesheet">
 
-    <script src="vendor/vue/vue.min.js"></script>
+    <script src="vendor/vue/vue.js"></script>
     <script src="vendor/vue-resource/vue-resource.min.js"></script>
     <script src="vendor/vue-router/vue-router.min.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -32,6 +32,15 @@
                 <span class="separator">•</span>
                 <span class="track-album">{{ track.album }}</span>
             </div>
+            <div v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
+                    <button v-on:click="removeFromFavs(track.id)">- Remove from favorites</button>
+            </div>
+            <div v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
+                    <button v-on:click="addToFavs(track.id)">+ Add to favorites</button>
+            </div>
+            <div v-else>
+                <span>log 1st</span>
+            </div>
         </li>
     </ol>
 </template>
@@ -48,6 +57,21 @@
 <template id="tpl-favorites">
     <h1>les favourites</h1>
 </template>
+
+<template id="tpl-login-link">
+    <a v-on:click="switchToInput" href="#">Login</a>
+</template>
+
+<template id="tpl-login-input">
+    <form onsubmit="event.preventDefault">
+        <div class="input-group">
+            <input v-model="email" type="email" class="form-control" placeholder="Enter your email" value="admin@ubiwhere.com">
+            <span class="input-group-btn">
+                <input class="btn btn-primary" type="submit" v-on:click="login(email)" value="Login">
+            </span>
+        </div>
+        </form>
+</template>
 <!-- END VUE TEMPLATES -->
 
 <div id="app" class="container-fluid">
@@ -60,17 +84,19 @@
                     <a>Latest</a>
                 </router-link>
 
-                <router-link tag="li" :to="{ name: 'favorites', params: { userId: 2 }}" role="presentation">
+                <router-link v-if="User.isLogged" tag="li" :to="{ name: 'favorites', params: { userId: User.id }}" role="presentation">
                     <a>Favorites</a>
                 </router-link>
             </ul>
             <hr/>
             <div v-if="User.isLogged" class="user-info">
-                <img id="user-avatar" src="#"/>
-                <span id="user-name">---</span>
+                <img id="user-avatar" v-bind:src="User.gravatar"/>
+                <span id="user-name" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">{{User.username}}</span>
+                <span class="separator">•</span>
+                <router-link to="/" class="track-name"><span v-on:click="User.logout">Logout</span></router-link>
             </div>
             <div v-else>
-                Please login
+                <component :is="current"></component>
             </div>
         </div>
         <div class="col-md-10">
@@ -81,7 +107,10 @@
 </div>
 
     <!-- load app -->
+<!--    <script src="vendor/jquery/js/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>-->
     <script src="js/app.js"></script>
+    <script src="js/MD5.js"></script>
 </body>
 
 </html>
