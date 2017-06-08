@@ -25,21 +25,21 @@
 <!-- track list -->
 <template id="tpl-tracklist">
     <ol class="tracks-list" id="tracks-container">
-        <li v-for="track in tracks">
-            <div><router-link :to="{ name: 'music', params: { musicId: track.id }}" class="track-name">{{ track.track }}</router-link></div>
-            <div>
-                <span class="track-artist">{{ track.artist }}</span>
-                <span class="separator">•</span>
-                <span class="track-album">{{ track.album }}</span>
+        <li v-for="(track, idx) in tracks" class="track-item">
+			<span class="track-index">{{ idx+1 }}.</span>
+			<div class="track-infos">
+	            <div><router-link :to="{ name: 'music', params: { musicId: track.id }}" class="track-name">{{ track.track }}</router-link></div>
+	            <div>
+	                <span class="track-artist">{{ track.artist }}</span>
+	                <span class="separator">•</span>
+	                <span class="track-album">{{ track.album }}</span>
+	            </div>
+			</div>
+            <div class="favorite" v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
+                    <button class="btn btn-primary" v-on:click="removeFromFavs(track.id)">- Remove from favorites</button>
             </div>
-            <div v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
-                    <button v-on:click="removeFromFavs(track.id)">- Remove from favorites</button>
-            </div>
-            <div v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
-                    <button v-on:click="addToFavs(track.id)">+ Add to favorites</button>
-            </div>
-            <div v-else>
-                <span>log 1st</span>
+            <div class="favorite" v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
+                    <button class="btn btn-primary" v-on:click="addToFavs(track.id)">+ Add to favorites</button>
             </div>
         </li>
     </ol>
@@ -99,7 +99,7 @@
                 <component :is="current"></component>
             </div>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10" id="content">
             <router-view ref="curComponent"></router-view>
         </div>
     </div>
