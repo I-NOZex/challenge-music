@@ -36,10 +36,10 @@
 	            </div>
 			</div>
             <div class="favorite" v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
-                    <button class="btn btn-primary" v-on:click="removeFromFavs(track.id)">- Remove from favorites</button>
+                    <button class="btn btn-primary btn-xs" v-on:click="removeFromFavs(track.id)"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span></button>
             </div>
             <div class="favorite" v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
-                    <button class="btn btn-primary" v-on:click="addToFavs(track.id)">+ Add to favorites</button>
+                    <button class="btn btn-primary btn-xs" v-on:click="addToFavs(track.id)"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></button>
             </div>
         </li>
     </ol>
@@ -63,7 +63,7 @@
 </template>
 
 <template id="tpl-login-input">
-    <form onsubmit="event.preventDefault">
+    <form @submit.prevent>
         <div class="input-group">
             <input v-model="email" type="email" class="form-control" placeholder="Enter your email" value="admin@ubiwhere.com">
             <span class="input-group-btn">
