@@ -133,7 +133,7 @@ gulp.task('release', ['clean', 'copy-images', 'copy-vendors', 'html-minify', 'sc
 //development task
 gulp.task('start', ['release', 'watch']);
 
-gulp.task('heroku:','release', function() {
+gulp.task('heroku:',['release'], function() {
   connect.server({
     root: prodPaths.root,
     port: process.env.PORT || 5000, // localhost:5000
