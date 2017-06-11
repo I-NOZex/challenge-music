@@ -1,8 +1,13 @@
 'use strict';
 
+(function () {
+    if ( typeof NodeList.prototype.forEach === "function" ) return false;
+    NodeList.prototype.forEach = Array.prototype.forEach;
+})();
+
 var api = new Vue({
     http: {
-        root: 'http://localhost:8080/api',
+        root: 'http://192.168.1.6:8080/api',
     }
 });
 
@@ -100,19 +105,27 @@ User.isFavorite = function(musicId){
 
 User.addFavourite = function(musicId){
     var _this = this;
-    if (User.isLogged !== true) return "Please login before";
-    if ((''+User.musicId).length < 1) return "Invalid music ID";
-    api.$http.post(apiResources.favorites.replace(":userId", _this.id), {"musicid": musicId}).then(function success(response){
-        return response.body;
+    return new Promise(function(resolve, reject){    
+        if (User.isLogged !== true) reject("Please login before");
+        if ((''+User.musicId).length < 1) reject("Invalid music ID");
+        api.$http.post(apiResources.favorites.replace(":userId", _this.id), {"musicid": musicId}).then(function success(response){
+            resolve(response.body);
+        }, function error(response){
+            reject('Request error: '+response.statusText)
+        });
     });
 }
 
 User.removeFavourite = function(musicId){
     var _this = this;
-    if (User.isLogged !== true) return "Please login before";
-    if ((''+User.musicId).length < 1) return "Invalid music ID";
-    api.$http.delete(apiResources.favorites.replace(":userId", _this.id)+'/'+ musicId).then(function success(response){
-        return response.body;
+    return new Promise(function(resolve, reject){    
+        if (User.isLogged !== true) reject("Please login before");
+        if ((''+User.musicId).length < 1) reject("Invalid music ID");
+        api.$http.delete(apiResources.favorites.replace(":userId", _this.id)+'/'+ musicId).then(function success(response){
+            resolve(response.body);
+        }, function error(response){
+            reject('Request error: '+response.statusText)
+        });
     });
 }
 
@@ -124,7 +137,9 @@ Vue.component('login-input',{
             /*var re = /\S+@\S+\.\S+/;
             if(!re.test(email)) return false;*/
             this.$parent.User.login(email).then(function(result){
-            app.$refs.curComponent.fetchFavs(true)
+                app.$refs.curComponent.fetchFavs(true)
+            }, function error(response){
+                app.showToast(response, 'error')
             });
         }
     },
@@ -141,7 +156,8 @@ Vue.component('login-link',{
 
 Vue.component('toast-alert',{
     template:'#tpl-toast-alert',
-    data: function(){ return { isActive: false}  },
+    props: ['toast'],
+    //data: function(){ return { toast: { }  } },
     methods:{
         switchToInput:function(){
             this.$parent.switchToInput();
@@ -156,7 +172,8 @@ var HomeComponent = {
     created: function(){
         // fetch the data when the view is created and the data is
         // already being observed
-                this.fetchFavs(true)
+        if(this.$parent.User.isLogged)
+            this.fetchFavs(true)
 
         this.fetchData()
     },
@@ -166,12 +183,15 @@ var HomeComponent = {
             api.$http.get(apiResources.musics).then(function success(tracks){
                 console.log('tracks loaded');
                 _this.tracks = tracks.body;
-            });
+            }, function error(response){
+                app.showToast("Error: Can't get musics list", 'error')
+            })
+
 
         },
         fetchFavs: function(isCreation){
             var _this = this;
-            api.$http.get(apiResources.favorites.replace(":userId", User.id)).then(function success(favs){
+            _this.$parent.User.getFavourites().then(function success(favs){
                                 console.log('favs loaded');
                 if(!favs.body) return;
 
@@ -186,13 +206,21 @@ var HomeComponent = {
             });
         },
         addToFavs: function(musicId){
-            console.log(this.$parent.User.addFavourite(musicId))
+            this.$parent.User.addFavourite(musicId).then(function success(response){
+                app.showToast(response.message, 'success')
+            }, function error(response){
+                app.showToast("Error: A problem has occurred while adding to favorites", 'error')
+            })
             this.fvs.push(musicId)
             this.fetchFavs()
             //this.fetchData()
         },
         removeFromFavs: function(musicId){
-            console.log(this.$parent.User.removeFavourite(musicId))
+            this.$parent.User.removeFavourite(musicId).then(function success(response){
+                app.showToast(response.message, 'success')
+            }, function error(response){
+                app.showToast("Error: A problem has occurred while removing from favorites", 'error')
+            })
             this.fvs.splice(this.fvs.indexOf(musicId), 1)
             this.fetchFavs()
         },
@@ -206,7 +234,15 @@ var HomeComponent = {
 
                 return isFav;
 
-        }
+        },
+        activateCurrent: function(newCurrentId){
+            var childs = document.getElementById('tracks-container');
+            childs.childNodes.forEach(function(child){
+                child.classList.remove('active');
+            });
+            var newCurrent = document.getElementById(newCurrentId);
+            newCurrent.classList.add('active');      
+        }   
     },
     computed: {
         isUserLogged: function(){
@@ -237,22 +273,39 @@ var FavoritesComponent = {
                 }
             }, function error(response){
                 //TODO: handle error
+                app.showToast("Error: Can't get favorits list", 'error')
             });
         },
         addToFavs: function(musicId){
-            console.log(this.$parent.User.addFavourite(musicId))
+            this.$parent.User.addFavourite(musicId).then(function success(response){
+                app.showToast(response.message, 'success')
+            }, function error(response){
+                app.showToast(response, 'error')
+            })
             this.fvs.push(musicId)
             this.fetchData()
             //this.fetchData()
         },
         removeFromFavs: function(musicId){
-            console.log(this.$parent.User.removeFavourite(musicId))
+            this.$parent.User.removeFavourite(musicId).then(function success(response){
+                app.showToast(response.message, 'success')
+            }, function error(response){
+                app.showToast("Error: A problem has occurred while removing from favorites", 'error')
+            })
             this.fvs.splice(this.fvs.indexOf(musicId), 1)
             this.fetchData()
         },
         isFavorite: function(musicId){
             return true;
-        }
+        },
+        activateCurrent: function(newCurrentId){
+            var childs = document.getElementById('tracks-container');
+            childs.childNodes.forEach(function(child){
+                child.classList.remove('active');
+            });
+            var newCurrent = document.getElementById(newCurrentId);
+            newCurrent.classList.add('active');      
+        } 
     },
     computed: {
         isUserLogged: function(){
@@ -263,7 +316,7 @@ var FavoritesComponent = {
 
 var TrackDetailsComponent = {
     template: '#tpl-track-details',
-    data: function(){ return {track: null} },
+    data: function(){ return {trackdetails: {track:null, artist: null, album: null}} },
     created: function(){
         // fetch the data when the view is created and the data is
         // already being observed
@@ -273,9 +326,10 @@ var TrackDetailsComponent = {
         fetchData: function(){
             var _this = this;
             api.$http.get(apiResources.musicDetails.replace(":musicId", _this.$route.params.musicId)).then(function success(response){
-                _this.track = response.body[0];
+                _this.trackdetails = response.body[0];
             }, function error(response){
                 //TODO: handle error
+                app.showToast("Error: Some error occurred while fetching music details", 'error')
             });
         }
     }
@@ -288,9 +342,9 @@ var TrackDetailsComponent = {
 // Vue.extend(), or just a component options object.
 // We'll talk about nested routes later.
 var routes = [
-    { path: '/', component: HomeComponent },
-    { path: '/users/:userId/musics', component: FavoritesComponent, name: 'favorites' },
-    { path: '/musics/:musicId', component: TrackDetailsComponent, name: 'music' }
+    { path: '/', component: HomeComponent, name: 'home', meta: {title: 'Home'} },
+    { path: '/users/:userId/musics', component: FavoritesComponent, name: 'favorites', meta: {title: 'Favorites'} },
+    { path: '/musics/:musicId', component: TrackDetailsComponent, name: 'music', meta: {title: 'Music Detail'} }
 ]
 
 // 3. Create the router instance and pass the `routes` option
@@ -299,6 +353,15 @@ var routes = [
 var router = new VueRouter({
     linkActiveClass: 'active',
     routes: routes
+})
+
+router.beforeEach(function(to, from, next) {
+    if(!User.isLogged && to.name === 'favorites'){
+        next({ path: '/', replace: true})
+    } else {
+        document.title = "Beat2Revolution | "+to.meta.title
+        next()
+    }
 })
 
 
@@ -310,6 +373,9 @@ var app = new Vue({
     data: {
         User: User,
     	current:"login-link",
+        toast: { msg:null, type:null },
+        isToastActive: false,
+        isSideBarCollapsed: true
         //switchToInput: function(){console.log('bla')} //this.switchToInput
     },
     methods:{
@@ -318,7 +384,19 @@ var app = new Vue({
         },
         switchToInput:function switchToInput(){
         	this.current = 'login-input'
-        }
+        },
+        showToast:function showToast(msg, type){
+            var _this = this;
+        	_this.toast.msg = msg;
+        	_this.toast.type = type;
+            _this.isToastActive = true;
+            setTimeout(function(){
+                _this.isToastActive = false;
+            },3500)
+        },  
+        toggleCollapse: function(){
+            this.isSideBarCollapsed = !this.isSideBarCollapsed;
+        }          
     },
-    components:['login-link','login-input'],
+    components:['login-link','login-input', 'toast-alert'],
 }).$mount('#app')

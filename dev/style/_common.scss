@@ -1,8 +1,64 @@
 body{
-    background-image: linear-gradient(to bottom, rgb(53, 71, 99), rgb(5, 7, 9) 85%);
+    background-image: linear-gradient(rgb(30, 51, 100), rgb(3, 6, 11) 85%);
     background-size: cover;
     background-repeat: no-repeat;
     height: 100%;
+	color: #fff;
+}
+a{
+	color: #a0a0a0;
+	&:hover{
+		color: #fff;
+	}
+}
+
+hr{
+	border: 1px solid hsla(0,0%,100%,.25)
+}
+
+.btn.btn-green {
+    background-color: #2ebd59;
+    border-color: #2ebd59;
+	outline-color: #2ebd59;
+}
+
+.btn.btn-red {
+    background-color: #ea0c64;
+    border-color: #ea0c64;
+	outline-color: #ea0c64;
+	
+}
+
+.separator{
+	padding: 0 8px;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
+}
+
+.toast{
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    z-index: 102;
+
+	&.error{
+		background-color: #ea0c64;
+	}
+
+	&.success{
+		background-color: #2fbd59;		
+	}
 }
 
 .sidebar{
@@ -14,20 +70,73 @@ body{
         width: 100%;
         background-image: url(../img/logo.png);
         background-size: auto 100%;
-        height: 9.5em;
+        height: 50%;
         background-repeat: no-repeat;
         background-position: center;
+		background-size: contain;
         display: block;
     }
 
-    .user-info{
-        bottom: 0;
-        position: absolute;
-        margin-bottom: 1.1em;
+	.toggle-collapse{
+		position: absolute;
+		top: 1em;
+		right: 1em;	
+		background: transparent;	
+
+		&:hover, &:focus, &:active{
+			outline: none;
+			border: 1px solid transparent;
+			color: #fff;
+		}
+	}
+
+	.collapsable-content{
+		.nav-pills>li{
+			& > a{
+				font-weight: bold;
+				padding: 3px 0;
+			}
+
+			&.active>a {
+				color: #a0a0a0;
+				background-color: transparent;
+			}		
+
+			& >a:focus, 
+			& >a:hover {
+				color: #fff;
+				background-color: transparent;
+			}		
+
+			&.router-link-exact-active.active>a,
+			&.router-link-exact-active.active>a:focus, 
+			&.router-link-exact-active.active>a:hover {
+				color: #1db954;
+				background-color: transparent;
+			}
+		}	
+
+		.user-info{
+			bottom: 0;
+			position: absolute;
+			margin-bottom: 1.1em;
+
+			#user-avatar{
+				height: 28px;
+				width: 28px;
+				border-radius: 100%;
+			}
+		}
     }
 }
 
+.row{
+	height: 100vh;
+}
+
 #content{
+	margin-top: 30px;
+
 	#tracks-container{
 	    color: white;
 		padding: 0;
@@ -39,18 +148,20 @@ body{
 			margin-bottom: 0.9em;
 			padding: 0.5em;
 			
+			
 			.track-index{
 			    text-align: right;
 			    padding-right: 1em;
 			    width: 3em;
-			}
+				color: #a0a0a0;
+			} 
 			
 			.track-infos{
 			    text-align: left;
     			flex: 1;
     			
     			.track-name{
-    				color: white;
+    				//color: white;
     			}
 			}
 			
@@ -69,13 +180,42 @@ body{
 			&:last-child{
 				margin-bottom: 0;
 			}
-			&:hover{ 
+			&:hover, &:focus, &.active{ 
 				background-color: rgba(0,0,0,.3);
 			
 				.favorite .btn{
 					opacity:1;
 				}
 			}
+		}
+	}
+}
+
+@media (max-width: 768px) { 
+	hr{
+		margin-bottom: 5px;
+		margin-top: 5px;
+	}
+
+	.sidebar{
+		height: auto;
+		.logo{
+			height: 20vh;
+		}
+
+		&.collapsed {
+			height: 27vh;
+			position: relative;
+		}		
+
+		&.collapsed .collapsable-content{
+			display: none;
+		}		
+
+		.collapsable-content .user-info {
+    		position: relative;
+    		margin-top: 1.1em;		
+    		margin-bottom: 0;		
 		}
 	}
 }
