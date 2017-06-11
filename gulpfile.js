@@ -5,6 +5,8 @@ var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 const autoprefixer = require('gulp-autoprefixer');
+var  connect = require('gulp-connect');
+
 
 var devPaths = {
     html: './dev/*.html',
