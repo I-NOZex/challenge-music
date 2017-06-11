@@ -138,6 +138,16 @@ Vue.component('login-link',{
         }
     },
 })
+
+Vue.component('toast-alert',{
+    template:'#tpl-toast-alert',
+    data: function(){ return { isActive: false}  },
+    methods:{
+        switchToInput:function(){
+            this.$parent.switchToInput();
+        }
+    },
+})
 // 1. Define route components.
 // These can be imported from other files
 var HomeComponent = {
@@ -290,6 +300,7 @@ var router = new VueRouter({
     linkActiveClass: 'active',
     routes: routes
 })
+
 
 // 4. Create and mount the root instance.
 // Make sure to inject the router with the router option to make the
