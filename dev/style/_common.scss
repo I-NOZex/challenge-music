@@ -1,9 +1,8 @@
 body{
-    background-image: linear-gradient(rgb(30, 51, 100), rgb(3, 6, 11) 85%);
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-color: #181818;
     height: 100%;
 	color: #fff;
+	overflow: hidden;
 }
 a{
 	color: #a0a0a0;
@@ -13,7 +12,7 @@ a{
 }
 
 hr{
-	border: 1px solid hsla(0,0%,100%,.25)
+	border-top: 1px solid hsla(0,0%,100%,.25)
 }
 
 .btn.btn-green {
@@ -28,6 +27,74 @@ hr{
 	outline-color: #ea0c64;
 	
 }
+
+.button-fav, .button-fav.add {
+	position: absolute;
+	top: 0px;
+	width: 16px;
+	height: 16px;
+	right: 0;
+	background-color: transparent;
+    border: none;
+    outline: none;	
+
+	&:before, &:after {
+		position: absolute;
+		content: ' ';
+		background-color: #a0a0a0;
+	}
+
+	&:hover:before, &:hover:after  {
+		background-color: #fff;
+	}                
+
+	&:before {
+		left: 7.5px;
+		top: 0px;
+		height: 16px;
+		width: 1px;
+	}
+
+	&:after {
+		left: 0;
+		top: 7.5px;
+		width: 16px;
+		height:1px;
+	}   
+
+	&.added{
+
+
+		&:before {
+			transform: rotate(40deg);
+			height: 14px;
+			left: 9.5px;
+		}
+		&:after{
+			transform: rotate(50deg);
+			width: 6px;
+			top: 8.5px;			
+		}
+
+		&:hover{
+			&:before {
+				left: 7.5px;
+				top: 0px;
+				height: 16px;
+				width: 1px;
+				transform: rotate(45deg);
+			}
+
+			&:after {
+				left: 0;
+				top: 7.5px;
+				width: 16px;
+				height:1px;
+				transform: rotate(45deg);
+			}			
+		}
+	}
+}      
 
 .separator{
 	padding: 0 8px;
@@ -61,8 +128,12 @@ hr{
 	}
 }
 
+.media{
+	display: flex;
+}
+
 .sidebar{
-    background-color: rgba(0,0,0,.5);
+    background-color: #121212;
     height: 100vh;
     padding: 1em;
 
@@ -93,7 +164,6 @@ hr{
 	.collapsable-content{
 		.nav-pills>li{
 			& > a{
-				font-weight: bold;
 				padding: 3px 0;
 			}
 
@@ -111,8 +181,17 @@ hr{
 			&.router-link-exact-active.active>a,
 			&.router-link-exact-active.active>a:focus, 
 			&.router-link-exact-active.active>a:hover {
-				color: #1db954;
+				color: #fff;
 				background-color: transparent;
+
+				&:before {
+					content: '';
+					background-color: #1db954;
+					height: 18px;
+					width: 4px;
+					position: absolute;
+					margin: 1px -15px;
+				}
 			}
 		}	
 
@@ -130,64 +209,78 @@ hr{
     }
 }
 
-.row{
+.row.content{
 	height: 100vh;
 }
 
 #content{
 	margin-top: 30px;
+	overflow-x: auto;	
 
-	#tracks-container{
-	    color: white;
-		padding: 0;
-		
-		.track-item{
-			position: relative;
-			transition: background-color .2s linear;
-			display: flex;
-			margin-bottom: 0.9em;
-			padding: 0.5em;
-			
-			
-			.track-index{
-			    text-align: right;
-			    padding-right: 1em;
-			    width: 3em;
-				color: #a0a0a0;
-			} 
-			
-			.track-infos{
-			    text-align: left;
-    			flex: 1;
-    			
-    			.track-name{
-    				//color: white;
-    			}
-			}
-			
-			.favorite{
-			    text-align: right;
-			    padding-right: 1em;
-				display: flex;
-							
-				.btn{
-					opacity: 0;
-					transition: opacity .3s linear;
-				}
-			}
-			
-			
-			&:last-child{
-				margin-bottom: 0;
-			}
-			&:hover, &:focus, &.active{ 
-				background-color: rgba(0,0,0,.3);
-			
-				.favorite .btn{
-					opacity:1;
-				}
-			}
+	.tracklist{		
+
+		tr:hover {
+			background-color: #282828;
 		}
+
+		.toggle-favorites{
+			position: relative;
+			margin-top: 3px;
+		}
+
+		/*#tracks-container{
+			color: white;
+			padding: 0;
+			
+			.track-item{
+				position: relative;
+				transition: background-color .2s linear;
+				display: flex;
+				margin-bottom: 0.9em;
+				padding: 0.5em;
+				
+				
+				.track-index{
+					text-align: right;
+					padding-right: 1em;
+					width: 3em;
+					color: #a0a0a0;
+				} 
+				
+				.track-infos{
+					text-align: left;
+					flex: 1;
+					
+					.track-name{
+						//color: white;
+					}
+				}
+				
+				.favorite{
+					text-align: right;
+					padding-right: 1em;
+					display: flex;
+								
+					.toggle-favorites{
+						background-color: transparent;
+						border: 0 solid transparent;
+						position: relative;
+					}
+				}
+				
+				
+				&:last-child{
+					margin-bottom: 0;
+				}
+				&:hover, &:focus, &.active{ 
+					background-color: rgba(0,0,0,.3);
+				
+					.favorite .toggle-favorites{
+						//opacity:1;
+					}
+				}
+			}
+		}*/
 	}
 }
 
@@ -200,11 +293,11 @@ hr{
 	.sidebar{
 		height: auto;
 		.logo{
-			height: 20vh;
+			height: 15vh;
 		}
 
 		&.collapsed {
-			height: 27vh;
+			height: 22vh;
 			position: relative;
 		}		
 

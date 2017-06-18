@@ -1,0 +1,144 @@
+.mediaplayer{
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #a0a0a0;
+    background-color: #282828;
+    border-top: 1px solid #121212;
+
+    .now-playing{
+        .media-object{
+            max-height: 56px;
+        }
+
+        .music-info{
+            text-align: left;    
+
+            .music-name, .music-artists{
+                display: block;
+            }
+
+            .music-name{
+                color: #fff;
+            }
+
+            .music-artists{
+                font-size: 11px;
+            }                        
+        }
+    }
+
+    .player-buttons{
+        margin-bottom: 12px;
+    }
+
+    .control-button{
+        background-color: transparent;
+        border: none;
+        outline: none;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        color: inherit;
+
+        &.rounded{
+            border: 1px solid #a0a0a0;
+            border-radius: 100%;
+            transition: all 33ms cubic-bezier(.3,0,.7,1);
+
+            .glyphicon:before{
+                margin-left: 2px;
+            }
+        }
+
+        &:hover{
+            color: #fff;
+
+            &.rounded{
+                transform: scale(1.125);
+                border-color: #fff;
+
+                .glyphicon:before{
+                    margin-left: 2px * 0.125;
+                }                
+            }
+        }         
+
+        &:active{
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: inherit;
+            &.rounded{
+                transform: scale(1);
+                border: 1px solid #a0a0a0;
+            }                    
+        }    
+    }             
+
+    .progress-container{
+        display: flex;
+
+        .progress-time{
+            font-size: 11px;
+            line-height: 12px;
+            min-width: 40px;
+        }
+
+        .progress-bar{
+            border-radius: 2px;
+            height: 4px;
+            margin: 4px 0 ;
+            background-color: #404040;
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+
+            .progress-bar-thumb{
+                background-color: #fff;
+                border-radius: 50%;
+                width: 12px;
+                height: 12px;
+                margin-left: -6px;
+                margin-top: -4px;
+                z-index: 100;
+                box-shadow: 0 2px 4px 0 rgba(0,0,0,.5);
+                transform: scale(0);
+                transition: transform .1s cubic-bezier(.3,0,.7,1);   
+                position: absolute;
+                left: 20%;         
+            }
+
+            .progress-bar-seek{
+                border-radius: 2px;
+                height: 4px;
+                background-color: #a0a0a0;
+                width: 100%;
+            }      
+        }
+
+        &:hover .progress-bar-seek{
+            background-color: #1db954;
+        }   
+        
+        &:hover .progress-bar-thumb{
+            transform: scale(1);
+        }  
+
+    }      
+
+    .side-controls{
+        display: flex;
+        padding-top: 12px;
+
+        .progress-container{
+                width: 100%;
+                align-items: center; 
+        }
+
+        .control-button{
+            display: inline-flex;
+        }
+    }    
+
+}

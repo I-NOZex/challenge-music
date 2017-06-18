@@ -24,25 +24,34 @@
 <!-- VUE TEMPLATES -->
 <!-- track list -->
 <template id="tpl-tracklist">
-    <ol class="tracks-list" id="tracks-container">
-        <li v-for="(track, idx) in tracks" class="track-item" v-on:click="activateCurrent('track-item-'+idx)" v-bind="{id: 'track-item-'+idx}">
-			<span class="track-index">{{ idx+1 }}.</span>
-			<div class="track-infos">
-	            <div><router-link :to="{ name: 'music', params: { musicId: track.id }}" class="track-name">{{ track.track }}</router-link></div>
-	            <div>
-	                <span class="track-artist">{{ track.artist }}</span>
-	                <span class="separator">•</span>
-	                <span class="track-album">{{ track.album }}</span>
-	            </div>
-			</div>
-            <div class="favorite" v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
-                    <button class="btn btn-red btn-xs" v-on:click="removeFromFavs(track.id)"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></button>
-            </div>
-            <div class="favorite" v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
-                    <button class="btn btn-green btn-xs" v-on:click="addToFavs(track.id)"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span></button>
-            </div>
-        </li>
-    </ol>
+
+    <table class="table table-hover tracklist">
+        <tbody>
+            <tr v-for="(track, idx) in tracks">
+                <td>
+                    <!-- if is favorite -->
+                    <div class="toggle-favorites" v-if="isUserLogged && (fvs.indexOf(track.id) >= 0)">
+                        <button title="Remove from your Favorites" class="button-fav added" v-on:click="removeFromFavs(track.id)"></button>
+                    </div>
+                    <!-- if isn't favorite -->
+                    <div class="toggle-favorites" v-else-if="isUserLogged &&  (fvs.indexOf(track.id) < 0)">
+                        <button title="Save to your Favorites" class="button-fav add" v-on:click="addToFavs(track.id)"></button>
+                    </div>
+                </td>
+                <td>{{ track.track }}</td>
+                <td>{{ track.artist }}</td>
+                <td>{{ track.album }}</td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <td></td>
+                <td>Title</td>
+                <td>Artist</td>
+                <td>Album</td>
+            </tr>
+        </thead>
+    </table>
 </template>
 
 <!-- track details -->
@@ -77,13 +86,60 @@
     <div class="toast" v-bind:class="toast.type">{{toast.msg}}</div>
 </template>
 
+<template id="tpl-media-player">
+    <footer class="navbar-fixed-bottom mediaplayer" id="footer-player">
+        <div class="now-playing col-sm-3">
+            <div class="media">
+            <div class="media-left">
+                <a href="#">
+                <img class="media-object" v-bind:src="file.musicCover" alt="Music Cover">
+                </a>
+            </div>
+            <div class="media-body music-info">
+                <a href="#" class="media-heading music-name">{{file.musicName}}</a>
+                <button title="Save to your Favorites" class="button-fav add"></button>
+                <div class="music-artists marquee"><span v-on:mouseover="marqueeAnimate">{{file.musicArtist}}</span></div>
+            </div>
+            </div>
+        </div>        
+        <div class="controls col-sm-6">
+            <div class="player-buttons">
+                <button title="Shuffle" class="control-button"><span class="glyphicon glyphicon-random"></span></button>
+                <button title="Previous" class="control-button"><span class="glyphicon glyphicon-step-backward"></span></button>
+                <button title="Play" class="control-button rounded" v-on:click="play"><span class="glyphicon" v-bind:class="[player.isPlaying ? 'glyphicon-pause' : 'glyphicon-play']"></span></button>
+                <button title="Next" class="control-button"><span class="glyphicon glyphicon-step-forward"></span></button>
+                <button title="Repeat" class="control-button"><span class="glyphicon glyphicon-retweet"></span></button>
+            </div>
+            <div class="progress-container">
+                <span class="progress-time">{{player.elapsedTime}}</span>
+                <div class="progress-bar">
+                    <div class="progress-bar-thumb" v-bind:style="{ left: player.elapsedPercent }"></div>
+                    <div class="progress-bar-seek" v-bind:style="{ width: player.elapsedPercent }"></div>
+                </div>
+                <span class="progress-time">{{totalTime}}</span>
+            </div>
+        </div>
+        <div class="side-controls col-sm-2 col-sm-offset-1 hidden-xs">
+            <button class="control-button"><span class="glyphicon glyphicon-list"></span></button>
+            <button class="control-button"><span class="glyphicon glyphicon-phone"></span></button>
+            <button class="control-button"><span class="glyphicon glyphicon-volume-down"></span></button>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-bar-thumb"></div>
+                    <div class="progress-bar-seek"></div>
+                </div>
+            </div>
+        </div>
+    </footer>  
+</template>
+
 
 <!-- END VUE TEMPLATES -->
 <div id="app" class="container-fluid">
     <transition name="fade">
         <toast-alert v-if="isToastActive" :toast="toast"></toast-alert>
     </transition>        
-    <div class="row">
+    <div class="row content">
         <div class="col-sm-2 sidebar" v-bind:class="{collapsed: isSideBarCollapsed}">
             <a href="./" class="logo"></a>
             <button v-on:click="toggleCollapse" class="btn btn-xs visible-xs-inline toggle-collapse">
@@ -116,14 +172,14 @@
             <router-view ref="curComponent"></router-view>
         </div>
     </div>
-
+    <media-player></media-player>
 </div>
 
     <!-- load app -->
 <!--    <script src="vendor/jquery/js/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>-->
+    <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/MD5.js"></script>
 </body>
 
 </html>

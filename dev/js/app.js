@@ -7,7 +7,7 @@
 
 var api = new Vue({
     http: {
-        root: 'https://beat2revolution-api.herokuapp.com/api',
+        root: 'http://localhost:8080/api',//'https://beat2revolution-api.herokuapp.com/api',
     }
 });
 
@@ -164,6 +164,85 @@ Vue.component('toast-alert',{
         }
     },
 })
+
+var playerData = {
+    player: {
+        engine: new Audio(),
+        isPlaying: false,
+        elapsedTime: '00:00',
+        elapsedPercent: 0
+    },
+    file: {
+        src: 'https://s3.amazonaws.com/pb_previews/205_clap-tap/205_full_clap-tap_0102.mp3',
+        duration: '102', //seconds
+        musicArtist: 'Brightside Studio',
+        musicName: 'Clap Tap',
+        musicCover: 'http://hw-img.datpiff.com/mb799428/Deion_Music_Birth-front.jpg',
+    }
+}
+Vue.component('media-player',{
+    template: '#tpl-media-player',
+    data: function(){ return playerData },
+    created: function(){
+        // fetch the data when the view is created and the data is
+        // already being observed
+        //fixContentHeight();
+        this.addListeners();
+    },
+    mounted: function() {
+        fixContentHeight();
+    },    
+    methods: {
+        addListeners: function() {
+            this.player.engine.addEventListener('timeupdate',this.timeUpdated,false);
+        },        
+        play: function(){
+            if(this.player.isPlaying){
+                this.player.engine.pause();
+                this.player.isPlaying = false;
+            } else {
+                this.player.engine.src = this.file.src;
+                this.player.engine.play();
+                this.player.isPlaying = true; 
+            }
+
+        },
+        marqueeAnimate: function(e){
+            var stringToAnimate = e.target;
+            var classes = stringToAnimate.classList;
+            if(classes.contains('animate')) return;
+            classes.add('animate');
+            stringToAnimate.parentNode.classList.add('animate')
+
+            window.addEventListener(animationEndEvent(), function() {
+                classes.remove('animate');
+                stringToAnimate.parentNode.classList.remove('animate')                
+            });
+            
+        },
+        timeUpdated: function(){
+            var seconds = Math.round(this.player.engine.currentTime),
+            min = Math.floor((seconds /60) << 0),
+            sec = Math.floor((seconds ) % 60);
+            this.player.elapsedTime  = (min<10?'0'+min:min) + ':' + (sec<10?'0'+sec:sec);
+            this.player.elapsedPercent = ((seconds * 100)  / this.file.duration)+'%';
+        } 
+    }, computed: {
+       /* elapsedTime: function(){
+            var seconds = Math.round(this.player.engine.currentTime),
+            min = Math.floor((seconds /60) << 0),
+            sec = Math.floor((seconds ) % 60);
+            return (min<10?'0'+min:min) + ':' + (sec<10?'0'+sec:sec);
+        },*/
+        totalTime: function(){
+            var seconds = this.file.duration,
+            min = Math.floor((seconds /60) << 0),
+            sec = Math.floor((seconds ) % 60);
+            return (min<10?'0'+min:min) + ':' + (sec<10?'0'+sec:sec);
+        }        
+    }
+});
+
 // 1. Define route components.
 // These can be imported from other files
 var HomeComponent = {
@@ -234,15 +313,7 @@ var HomeComponent = {
 
                 return isFav;
 
-        },
-        activateCurrent: function(newCurrentId){
-            var childs = document.getElementById('tracks-container');
-            childs.childNodes.forEach(function(child){
-                child.classList.remove('active');
-            });
-            var newCurrent = document.getElementById(newCurrentId);
-            newCurrent.classList.add('active');      
-        }   
+        }
     },
     computed: {
         isUserLogged: function(){
@@ -298,14 +369,6 @@ var FavoritesComponent = {
         isFavorite: function(musicId){
             return true;
         },
-        activateCurrent: function(newCurrentId){
-            var childs = document.getElementById('tracks-container');
-            childs.childNodes.forEach(function(child){
-                child.classList.remove('active');
-            });
-            var newCurrent = document.getElementById(newCurrentId);
-            newCurrent.classList.add('active');      
-        } 
     },
     computed: {
         isUserLogged: function(){
@@ -396,7 +459,7 @@ var app = new Vue({
         },  
         toggleCollapse: function(){
             this.isSideBarCollapsed = !this.isSideBarCollapsed;
-        }          
+        }   
     },
-    components:['login-link','login-input', 'toast-alert'],
+    components:['login-link','login-input', 'toast-alert', 'media-player'],
 }).$mount('#app')
