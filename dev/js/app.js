@@ -7,7 +7,8 @@
 
 var api = new Vue({
     http: {
-        root: 'http://localhost:8080/api',//'https://beat2revolution-api.herokuapp.com/api',
+        root: //'http://localhost:8080/api',
+        'https://beat2revolution-api.herokuapp.com/api',
     }
 });
 
