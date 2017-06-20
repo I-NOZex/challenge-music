@@ -273,10 +273,10 @@ var HomeComponent = {
             var _this = this;
             _this.$parent.User.getFavourites().then(function success(favs){
                                 console.log('favs loaded');
-                if(!favs.body) return;
+                if(!favs) return;
 
-                _this.favorites = favs.body;
-
+                _this.favorites = favs;
+                
                 if(isCreation){
                     _this.fvs = [];
                     _this.favorites.forEach(function(f){
